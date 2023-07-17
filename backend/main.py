@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from database import get_all_tasks, create_task, get_one_task
+from database import get_all_tasks, create_task, get_one_task, get_one_task_id, delete_task
 from models import Task
 
 app = FastAPI()
@@ -23,15 +23,20 @@ async def save_task(task: Task):
         return response
     raise HTTPException(400, 'Something went wrong')
 
-@app.get('/api/tasks/{id}')
-async def get_task():
-    return 'single task'
+@app.get('/api/tasks/{id}', response_model=Task)
+async def get_task(id: str):
+    task = await get_one_task_id(id)
+    if task:
+        return task
+    raise HTTPException(404, f'Task with id {id} not found')
 
 @app.put('/api/tasks/{id}')
 async def update_task():
     return 'updating task'
 
 @app.delete('/api/tasks/{id}')
-async def delete_task():
-    return 'delete task'
-
+async def remove_task(id: str):
+    response = await delete_task(id)
+    if response:
+        return "Task deleted succesfully"
+    raise HTTPException(404, f'Task with id {id} not found')
