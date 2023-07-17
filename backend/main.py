@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
-from database import get_all_tasks, create_task, get_one_task, get_one_task_id, delete_task
-from models import Task
+from database import get_all_tasks, create_task, get_one_task, get_one_task_id, delete_task, update_task
+from models import Task, UpdateTask
 
 app = FastAPI()
 
@@ -30,9 +30,12 @@ async def get_task(id: str):
         return task
     raise HTTPException(404, f'Task with id {id} not found')
 
-@app.put('/api/tasks/{id}')
-async def update_task():
-    return 'updating task'
+@app.put('/api/tasks/{id}', response_model=Task)
+async def put_task(id: str, task: UpdateTask):
+    response = await update_task(id, task)
+    if response:
+        return response
+    raise HTTPException(404, f'Task with id {id} nor found')
 
 @app.delete('/api/tasks/{id}')
 async def remove_task(id: str):
