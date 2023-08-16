@@ -1,26 +1,38 @@
 import { useState } from "react";
+import axios from 'axios'
 
 function TaskForm() {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+    
+    // Using vanilla
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+        
+    //     const res = await fetch('http://localhost:8000/api/tasks',{
+    //     method: 'POST',
+    //     body: JSON.stringify({
+    //         title,
+    //         description
+    //     }),
+    //     headers: {
+    //         'Content-type': 'application/json'
+    //     }
+    // })
+    // const data = await res.json()
 
+    // Using axios
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        const res = await fetch('http://localhost:8000/api/tasks',{
-        method: 'POST',
-        body: JSON.stringify({
+        const res = await axios.post("http://localhost:8000/api/tasks", {
             title,
             description
-        }),
-        headers: {
-            'Content-type': 'application/json'
-        }
-    })
-    const data = await res.json()
+        });
 
-    console.log(data)
-}
+    console.log(res)
+    e.target.reset()
+};
 
     return (
         <div className="flex items-center justify-center h-[calc(100vh-10rem)]">
