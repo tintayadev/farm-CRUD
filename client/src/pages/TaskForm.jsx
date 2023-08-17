@@ -1,9 +1,12 @@
 import { useState } from "react";
+import { useParams } from "react-router";
 import axios from 'axios'
 
 function TaskForm() {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+    const params = useParams()
+    console.log(params)
     
     // Using vanilla
     // const handleSubmit = async (e) => {
@@ -30,8 +33,8 @@ function TaskForm() {
             description
         });
 
-    console.log(res)
-    e.target.reset()
+    console.log(res);
+    e.target.reset();
 };
 
     return (
@@ -50,7 +53,9 @@ function TaskForm() {
                     rows={3}
                     onChange={(e) => setDescription(e.target.value)}
                 ></textarea>
-                <button>save</button>
+                <button>
+                    {params.id ? "Update Task" : "Create Task"}
+                </button>
             </form>
         </div>
     );
