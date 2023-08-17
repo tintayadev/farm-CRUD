@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from 'axios'
 
 function TaskForm() {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const params = useParams()
+    const navigate = useNavigate()
     
     // Using vanilla
     // const handleSubmit = async (e) => {
@@ -26,12 +27,30 @@ function TaskForm() {
     // Using axios
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        const res = await axios.post("http://localhost:8000/api/tasks", {
-            title,
-            description
-        });
-        console.log(res);
+
+        try {
+            if (!params.id){
+                // crea el task
+                const res = await axios.post("http://localhost:8000/api/tasks", {
+                    title,
+                    description
+                });
+                console.log(res);
+            }else {
+                // actualiza el task
+                const res = await axios.put(
+                    `http://localhost:8000/api/tasks/${params.id}`,
+                    {
+                        title,
+                        description
+                    }
+                );
+                console.log(res)
+            }
+            navigate("/");
+        } catch (error) {
+            console.log(error)
+        }
         e.target.reset();
     };
 
