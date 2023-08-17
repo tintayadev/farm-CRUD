@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 import axios from "axios";
+import TaskList from "../components/TaskList";
 
 function Homepage() {
     const [tasks, setTasks] = useState([]);
@@ -16,17 +17,7 @@ function Homepage() {
     return (
         <>
             <h1 className='text-3xl font-bold'>HomePage</h1>
-
-            {
-                tasks.map(task => (
-                    <div>
-                        <h2>
-                            {task.title}
-                        </h2>
-                        <p>{task.description}</p>
-                    </div>
-                ))
-            }
+            <TaskList tasks={tasks}/>
         </>
         
     )
