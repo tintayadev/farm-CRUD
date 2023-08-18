@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
+import { createTask, fetchTask, updateTask, deleteTask } from "../api/tasks";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from 'axios'
 
 function TaskForm() {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+    
     const params = useParams()
     const navigate = useNavigate()
     
@@ -31,38 +33,33 @@ function TaskForm() {
         try {
             if (!params.id){
                 // crea el task
-                const res = await axios.post("http://localhost:8000/api/tasks", {
-                    title,
-                    description
-                });
+                const res = await createTask({ title, description});
                 console.log(res);
             }else {
                 // actualiza el task
-                const res = await axios.put(
-                    `http://localhost:8000/api/tasks/${params.id}`,
-                    {
-                        title,
-                        description
-                    }
-                );
-                console.log(res)
+                const res = await updateTask(params.id, { title, description});
+                console.log(res);
             }
             navigate("/");
         } catch (error) {
-            console.log(error)
+            console.error(error);
+            if (error.response?.data) {
+                alert(error.response.data.detail);
+            }
         }
         e.target.reset();
     };
 
     useEffect(() => {
-        if(params.id){
-            fetchTask()
-        }
-
-        async function fetchTask() {
-            const res = await axios.get(`http://localhost:8000/api/tasks/${params.id}`)
-            setTitle(res.data.title)
-            setDescription(res.data.description)
+        if (params.id) {
+            fetchTask(params.id)
+                .then((res) => {
+                    setTitle(res.data.title);
+                    setDescription(res.data.description);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
         }
     }, [])
 
@@ -94,21 +91,19 @@ function TaskForm() {
                 <button
                     className="bg-white hover:bg-slate-800 hover:text-white text-slate-800 py-2 px-4 rounded"
                 >
-                    {params.id ? "Update Task" : "Create Task"}
+                    {params.id ? "Update" : "Create"}
                 </button>
             </form>
 
             {params.id && (
-                <button className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 rounded mt-5"
+                <button className="bg-red-400 hover:bg-red-400 text-white font-bold py-2 px-4 rounded mt-5"
                 onClick={async () => {
                     try {
-                        const res = await axios.delete(
-                            `http://localhost:8000/api/tasks/${params.id}`
-                        );
+                        const res = await deleteTask(params.id);
                         console.log(res);
                         navigate("/");
                     } catch (error) {
-                        console.log(error);
+                        console.error(error);
                     }
                 }}
                 >
