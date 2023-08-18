@@ -69,6 +69,7 @@ function TaskForm() {
 
     return (
         <div className="flex items-center justify-center h-[calc(100vh-10rem)]">
+            <div>
             <form className="bg-zinc-950 p-10" onSubmit={handleSubmit}>
                 <input
                     type="text"
@@ -89,6 +90,26 @@ function TaskForm() {
                     {params.id ? "Update Task" : "Create Task"}
                 </button>
             </form>
+
+            {params.id && (
+                <button className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 rounded mt-5"
+                onClick={async () => {
+                    try {
+                        const res = await axios.delete(
+                            `http://localhost:8000/api/tasks/${params.id}`
+                        );
+                        console.log(res);
+                        navigate("/");
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }}
+                >
+                    Delete
+                </button>
+            )}
+
+            </div>
         </div>
     );
 }
